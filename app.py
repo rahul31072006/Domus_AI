@@ -6,13 +6,12 @@ import joblib
 st.set_page_config(page_title="DOMUS AI", layout="centered")
 
 st.title("DOMUS AI")
-
 st.divider()
 
 # Load dataset
 data = pd.read_csv("clean_data.csv")
 
-# Load model filesD
+# Load model files
 model = joblib.load("model.pkl")
 scaler = joblib.load("scaler.pkl")
 features = joblib.load("features.pkl")
@@ -29,7 +28,7 @@ builder = st.selectbox("Select Builder", sorted(data["builder"].unique()))
 
 st.divider()
 
-#✅ SINGLE BUTTON (with unique key)
+# ✅ SINGLE BUTTON ONLY
 if st.button("Predict Price", key="predict_main"):
 
     # Input Data
@@ -46,7 +45,7 @@ if st.button("Predict Price", key="predict_main"):
     # Convert categorical
     input_data = pd.get_dummies(input_data)
 
-    # Match features
+    # Match training features
     input_data = input_data.reindex(columns=features, fill_value=0)
 
     # Scale
@@ -58,8 +57,6 @@ if st.button("Predict Price", key="predict_main"):
     # Show Price
     st.success(f"💰 Predicted House Price: ₹ {prediction:.2f} Lakhs")
 
-   
-
 # ---------------- GOOGLE MAP ----------------
 st.subheader("📍 Property Location")
 
@@ -69,27 +66,3 @@ map_url = f"https://www.google.com/maps?q={search_query}&output=embed"
 st.components.v1.iframe(map_url, height=400)
 
 st.divider()
-
-if st.button("Predict Price"):
-
-    input_data = pd.DataFrame({
-        "area": [area],
-        "status": [status],
-        "bhk": [bhk],
-        "bathroom": [bathroom],
-        "age": [age],
-        "location": [location],
-        "builder": [builder]
-    })
-
-    input_data = pd.get_dummies(input_data)
-    input_data = input_data.reindex(columns=features, fill_value=0)
-
-    input_scaled = scaler.transform(input_data)
-
-    # ✅ prediction is created HERE
-    prediction = model.predict(input_scaled)[0]
-
-    st.success(f"💰 Predicted House Price: ₹ {prediction:.2f} Lakhs")
-
-    
